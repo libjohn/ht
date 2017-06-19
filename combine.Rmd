@@ -1,0 +1,124 @@
+---
+title: "combining IVY+ dataframes"
+output: html_notebook
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+## load data
+
+`read_delim` will imputed data types of columns from the first 1000 rows.  Later steps will transform all dataframes to share the same column types.  Four files had project failures and should be investigated.
+```{r load-data}
+JHU <- read_delim("~/R/github/ht/data/JHU_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+UPenn <- read_delim("~/R/github/ht/data/UPenn_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+MIT <- read_delim("~/R/github/ht/data/MIT_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+Cornell <- read_delim("~/R/github/ht/data/Cornell_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+Brown <- read_delim("~/R/github/ht/data/Brown_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+Duke <- read_delim("~/R/github/ht/data/Duke_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+Yale <- read_delim("~/R/github/ht/data/Yale_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+UChicago <- read_delim("~/R/github/ht/data/UChicago_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+Harvard <- read_delim("~/R/github/ht/data/Harvard_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+Princeton <- read_delim("~/R/github/ht/data/Princeton_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+Columbia <- read_delim("~/R/github/ht/data/Columbia_Normalized.tsv", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+```
+
+## Idenitfy Standard data structure
+
+We'll use `glimpse()` and the JHU dataframe to identify the standard data types across all variables in all dataframes.
+```{r}
+glimpse(JHU)
+```
+
+
+## Transform variables
+
+Three files were imputed with incorrect guesses
+
+1. `read_delim()` imputed *UChicago* `gov_doc` to `character`.  Transformed below to `integer` 
+2. `read_delim()` imputed *Princeton* & *Columbia* `pub_year` to `character`. Transformed below to `integer`
+```{r}
+glimpse(UChicago)
+UChicago2 <-  UChicago %>% 
+  mutate(gov_doc = as.integer(gov_doc))
+glimpse(UChicago2)
+```
+
+```{r}
+glimpse(Princeton)
+Princeton2 <- Princeton %>% 
+  mutate(pub_year = as.integer(pub_year))
+glimpse(Princeton2)
+```
+
+```{r}
+glimpse(Columbia)
+Columbia2 <- Columbia %>% 
+  mutate(pub_year = as.integer(pub_year))
+glimpse(Columbia2)
+```
+
+
+## Combine all dataframes into one 
+```{r}
+
+big_df <- bind_rows(JHU, UPenn, MIT, 
+                    Cornell, Brown, 
+                    Yale, Harvard, Duke, 
+                    UChicago2,   # as.integer(gov_docs) 
+                    Princeton2,  # as.integer(pub_year)
+                    Columbia2)   # as.integer(pub_year)
+
+```
+
+## Write combined dataframe as one TSV file
+```{r}
+write.table(big_df, file = "data/combined.tsv", sep = "\t",  row.names = FALSE)
+```
+
+
+## Cleaning
+
+To avoid sharing data inappropriately, no data files are uploaded to this github repository
+```{r}
+
+rm(list = ls())
+
+```
+
+
+
+## Failures
+
+Note that four dataframes had parsing failures.  See console messages integrated into the project notebook ('combine.nb.html') for details.
+
+1. Cornell had 26 parsing failures out of over 1 Million rows.  The failures appear to be in the pub_year variable.
+
+1. Brown had 43 parsing failures out of 165,000 rows.  The failures appear to be in the pub_year variable.
+
+1. University of Chicago had 489 parsing failures out of almost 670,000 rows.  The failures appear to be in the pub_year variable
+
+1. Cornell had 26 parsing failures out of over 96,000 rows.  The failures appear to be in the pub_year variable. 
