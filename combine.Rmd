@@ -100,6 +100,32 @@ write.table(big_df, file = "data/combined.tsv", sep = "\t",  row.names = FALSE)
 ```
 
 
+## Failures
+
+Note that four dataframes had parsing failures.  See console messages integrated into the project notebook ('combine.nb.html') for details.
+
+1. Cornell had 26 parsing failures out of over 1 Million rows.  The failures appear to be in the pub_year variable.
+```{r}
+problems(Cornell)
+```
+
+
+1. Brown had 43 parsing failures out of 165,000 rows.  The failures appear to be in the pub_year variable.
+
+```{r}
+problems(Brown)
+```
+
+
+
+1. University of Harvard had 489 parsing failures out of almost 670,000 rows.  The failures appear to be in the pub_year variable
+
+```{r}
+problems(Harvard)
+```
+
+
+
 ## Cleaning
 
 To avoid sharing data inappropriately, no data files are uploaded to this github repository
@@ -108,17 +134,3 @@ To avoid sharing data inappropriately, no data files are uploaded to this github
 rm(list = ls())
 
 ```
-
-
-
-## Failures
-
-Note that four dataframes had parsing failures.  See console messages integrated into the project notebook ('combine.nb.html') for details.
-
-1. Cornell had 26 parsing failures out of over 1 Million rows.  The failures appear to be in the pub_year variable.
-
-1. Brown had 43 parsing failures out of 165,000 rows.  The failures appear to be in the pub_year variable.
-
-1. University of Chicago had 489 parsing failures out of almost 670,000 rows.  The failures appear to be in the pub_year variable
-
-1. Cornell had 26 parsing failures out of over 96,000 rows.  The failures appear to be in the pub_year variable. 
