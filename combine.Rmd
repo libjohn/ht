@@ -133,6 +133,8 @@ big_df <- big_df %>%
                             pub_year, NA_integer_))
 ```
 
+## Problems Detected
+
 ###  Frequency of resolved_OCLC Number
 
 Compute new column with facet count for `resolved_OCLC`, i.e., frequency count for each row based on resolved_OCLC
