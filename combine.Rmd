@@ -71,14 +71,18 @@ glimpse(UChicago2)
 ```{r}
 glimpse(Princeton)
 Princeton2 <- Princeton %>% 
-  mutate(pub_year = as.integer(pub_year))
+  mutate(pub_year = as.integer(pub_year)) %>% 
+  mutate(call_no = callno)
+Princeton2$callno <- NULL
 glimpse(Princeton2)
 ```
 
 ```{r}
 glimpse(Columbia)
 Columbia2 <- Columbia %>% 
-  mutate(pub_year = as.integer(pub_year))
+  mutate(pub_year = as.integer(pub_year)) %>% 
+  mutate(call_no = callno)
+Columbia2$callno <- NULL
 glimpse(Columbia2)
 ```
 
@@ -140,6 +144,24 @@ big_df %>%
   arrange(-n)
 ```
 
+#### List `member_id`
+```{r}
+big_df %>% 
+  select(member_id) %>% 
+  count(member_id)
+```
+
+#### Find examples of duplicates for each institution
+```{r}
+big_df %>% 
+  filter(member_id == "yale") %>% # brown, columbia, cornell
+  # duke, harvard, JHU, mit, princeton, uchicago, upenn, yale
+  count(primary_key) %>% 
+  arrange(-n)
+```
+
+
+
 #### filter on a specific `resolved_oclc`
 
 resolved_oclc == 883016 has 7 rows  
@@ -147,6 +169,16 @@ resolved_oclc == 883016 has 7 rows
 big_df %>% 
   filter(resolved_oclc == 883016)  # 42 ; rows 411-420
 ```
+
+```{r}
+big_df %>% 
+  filter(resolved_oclc == 493136) %>% 
+  group_by(member_id) %>% # columbia & princeton
+  select(member_id, call_no, 
+         lc_class, primary_key, resolved_oclc)
+  
+```
+
 
 #### filter on a specific `resolved_oclc`
 
@@ -158,11 +190,34 @@ big_df %>%
 
 #### Distinct primary_key
 
-looks like Princeton (perhaps; more research) has 50K duplicate rows by primary_key
+looks like Princeton (perhaps; more research) has 50K duplicate rows by primary_key.  Use `distinct()` to retain only unique/distinct rows from an input tbl.
+```{r}
+big_distinct_primary_key_df <-  big_df %>% 
+  distinct(primary_key, .keep_all = TRUE) 
+
+big_distinct_primary_key_df
+```
+
+##### Has Call No ?
+
+```{r}
+foo <- big_distinct_primary_key_df %>% 
+  select(resolved_oclc, call_no, lc_class) %>% 
+  arrange(call_no)
+
+tail(head(foo, 3329285))  # ~3,329,285 have callno #
+```
+
+##### Any Call No. in this group?
+
 ```{r}
 big_df %>% 
-  distinct(primary_key, .keep_all = TRUE) 
+  filter(resolved_oclc == 8785177) %>% 
+  select(call_no, callno)
 ```
+
+
+
 
 #### Testing
 
@@ -174,6 +229,40 @@ big_df %>%
   arrange(-n)
 
 ```
+
+### Tryin without duplicate resolved_oclc
+
+No
+- Princeton
+- Columbia
+- harvard
+
+```{r}
+big_no_dupe_df <- big_df %>% 
+  filter(member_id != "princeton" & 
+           member_id != "columbia" & 
+           member_id != "harvard")
+```
+
+
+
+```{r}
+big_no_dupe_df %>% 
+  count(resolved_oclc) %>% 
+  arrange(-n)
+```
+
+```{r}
+big_no_dupe_df %>% 
+  filter(resolved_oclc == 214718 |
+           resolved_oclc == 1467107 |
+           resolved_oclc == 137189 |
+           resolved_oclc == 2438338 | 
+           resolved_oclc == 14705951 | 
+           resolved_oclc == 300389) %>% 
+  arrange(resolved_oclc)
+```
+
 
 
 ## Write combined dataframe as one TSV file
@@ -208,11 +297,3 @@ problems(Harvard)
 
 
 
-## Cleaning
-
-To avoid sharing data inappropriately, no data files are uploaded to this github repository
-```{r}
-
-rm(list = ls())
-
-```
