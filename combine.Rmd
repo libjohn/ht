@@ -5,6 +5,7 @@ output: html_notebook
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(stringr)
 ```
 
 ## load data
@@ -50,7 +51,7 @@ Columbia <- read_delim("~/R/github/ht/data/Columbia_Normalized.tsv",
 
 We'll use `glimpse()` and the JHU dataframe to identify the standard data types across all variables in all dataframes.
 ```{r}
-glimpse(JHU)
+Bglimpse(JHU)
 ```
 
 
@@ -93,6 +94,87 @@ big_df <- bind_rows(JHU, UPenn, MIT,
                     Columbia2)   # as.integer(pub_year)
 
 ```
+
+## Further Transformations
+
+Per July 6 meeting.  Group decided on the following transformations as part of the data cleaning process...
+
+- Make LC Class all upper case
+- Set non-four-digit years to _blank_
+- Set all years not between 1440 and 2017 to _blank_
+- Compute new column with facet count for resolved_OCLC, i.e., frequency count for each row based on resolved_OCLC
+
+### Make LC Class all uppercase
+
+```{r}
+big_df <- big_df %>% 
+  mutate(lc_class = str_to_upper(lc_class))
+```
+
+### pub_year integrity transformation
+
+- Keep only 4-digit years in pub_year
+- Set non--four-digit years to blank
+- keep only pub_year between 1440 and 2017
+
+```{r}
+big_df <- big_df %>% 
+  mutate(pub_year = if_else(str_detect(pub_year, 
+                                       "\\d{4}"), 
+                            as.character(pub_year), 
+                            NA_character_)) %>%
+  mutate(pub_year = as.integer(pub_year)) %>% 
+  mutate(pub_year = if_else(pub_year >= 1440 
+                            & pub_year <= 2017, 
+                            pub_year, NA_integer_))
+```
+
+###  Frequency of resolved_OCLC Number
+
+Compute new column with facet count for `resolved_OCLC`, i.e., frequency count for each row based on resolved_OCLC
+
+
+```{r}
+big_df %>% 
+  count(resolved_oclc) %>% 
+  arrange(-n)
+```
+
+#### filter on a specific `resolved_oclc`
+
+resolved_oclc == 883016 has 7 rows  
+```{r}
+big_df %>% 
+  filter(resolved_oclc == 883016)  # 42 ; rows 411-420
+```
+
+#### filter on a specific `resolved_oclc`
+
+resolved_oclc == 276173 has 116 rows
+```{r}
+big_df %>% 
+  filter(resolved_oclc == 276173) # row 10 ; rows 10
+```
+
+#### Distinct primary_key
+
+looks like Princeton (perhaps; more research) has 50K duplicate rows by primary_key
+```{r}
+big_df %>% 
+  distinct(primary_key, .keep_all = TRUE) 
+```
+
+#### Testing
+
+Just verifying my process of grouping and counting by using a less ambiguous variable:  `member_id`
+```{r}
+big_df %>% 
+  group_by(member_id) %>% 
+  count(member_id) %>% 
+  arrange(-n)
+
+```
+
 
 ## Write combined dataframe as one TSV file
 ```{r}
