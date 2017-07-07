@@ -51,7 +51,7 @@ Columbia <- read_delim("~/R/github/ht/data/Columbia_Normalized.tsv",
 
 We'll use `glimpse()` and the JHU dataframe to identify the standard data types across all variables in all dataframes.
 ```{r}
-Bglimpse(JHU)
+glimpse(JHU)
 ```
 
 
