@@ -61,10 +61,17 @@ Three files were imputed with incorrect guesses
 
 1. `read_delim()` imputed *UChicago* `gov_doc` to `character`.  Transformed below to `integer` 
 2. `read_delim()` imputed *Princeton* & *Columbia* `pub_year` to `character`. Transformed below to `integer`
+
+One file had a variable name misspelled
+
+1. renamed `UChicago$other_committments` to `UChicago$other_commitments`
+
 ```{r}
 glimpse(UChicago)
 UChicago2 <-  UChicago %>% 
-  mutate(gov_doc = as.integer(gov_doc))
+  mutate(gov_doc = as.integer(gov_doc)) %>% 
+  mutate(other_commitments = other_committments) 
+UChicago2$other_committments <- NULL  
 glimpse(UChicago2)
 ```
 
@@ -133,11 +140,23 @@ big_df <- big_df %>%
                             pub_year, NA_integer_))
 ```
 
+### Eliminate dupliates
+
+```{r}
+big_df <- big_df %>% 
+  distinct(primary_key, .keep_all = TRUE) 
+
+```
+
+
+
 ## Problems Detected
 
 ###  Frequency of resolved_OCLC Number
 
 Compute new column with facet count for `resolved_OCLC`, i.e., frequency count for each row based on resolved_OCLC
+
+NOTE:  After getting a freshly de-duped file from UPenn and running `distinct()` on the big_data.frame (`big_df`) the data.frame has been reduced by 1% and the largest duplication on resolved OCLC numbers is 7.  This is understood to be correct.
 
 
 ```{r}
@@ -150,7 +169,8 @@ big_df %>%
 ```{r}
 big_df %>% 
   select(member_id) %>% 
-  count(member_id)
+  count(member_id) %>% 
+  arrange(-n)
 ```
 
 #### Find examples of duplicates for each institution
@@ -199,72 +219,6 @@ big_distinct_primary_key_df <-  big_df %>%
 
 big_distinct_primary_key_df
 ```
-
-##### Has Call No ?
-
-```{r}
-foo <- big_distinct_primary_key_df %>% 
-  select(resolved_oclc, call_no, lc_class) %>% 
-  arrange(call_no)
-
-tail(head(foo, 3329285))  # ~3,329,285 have callno #
-```
-
-##### Any Call No. in this group?
-
-```{r}
-big_df %>% 
-  filter(resolved_oclc == 8785177) %>% 
-  select(call_no, callno)
-```
-
-
-
-
-#### Testing
-
-Just verifying my process of grouping and counting by using a less ambiguous variable:  `member_id`
-```{r}
-big_df %>% 
-  group_by(member_id) %>% 
-  count(member_id) %>% 
-  arrange(-n)
-
-```
-
-### Tryin without duplicate resolved_oclc
-
-No
-- Princeton
-- Columbia
-- harvard
-
-```{r}
-big_no_dupe_df <- big_df %>% 
-  filter(member_id != "princeton" & 
-           member_id != "columbia" & 
-           member_id != "harvard")
-```
-
-
-
-```{r}
-big_no_dupe_df %>% 
-  count(resolved_oclc) %>% 
-  arrange(-n)
-```
-
-```{r}
-big_no_dupe_df %>% 
-  filter(resolved_oclc == 214718 |
-           resolved_oclc == 1467107 |
-           resolved_oclc == 137189 |
-           resolved_oclc == 2438338 | 
-           resolved_oclc == 14705951 | 
-           resolved_oclc == 300389) %>% 
-  arrange(resolved_oclc)
-```
-
 
 
 ## Write combined dataframe as one TSV file
