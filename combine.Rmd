@@ -140,7 +140,7 @@ big_df <- big_df %>%
                             pub_year, NA_integer_))
 ```
 
-### Eliminate dupliates
+### Eliminate duplicates
 
 ```{r}
 big_df <- big_df %>% 
