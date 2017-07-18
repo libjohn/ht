@@ -144,13 +144,37 @@ big_df <- big_df %>%
 
 ```{r}
 big_df <- big_df %>% 
-  distinct(primary_key, .keep_all = TRUE) 
+  distinct(primary_key, .keep_all = TRUE)
 
 ```
 
 
+## Priveledge: completeness heuristic
 
-## Problems Detected
+In the case where there is duplication in the `resolved_oclc` key, keep the first item that has data in each of the following variables:  pub_year, pub_country, language, lc_class
+
+
+```{r}
+# works for resolved_oclc = 7459090
+# works for resolved_oclc = 890946
+
+big_scored_df <- big_df %>% 
+  # filter(resolved_oclc == "890946" | resolved_oclc == 7459090) %>% 
+  select(member_id, primary_key, resolved_oclc, pub_year, pub_country, language, lc_class) %>% 
+  mutate(score = 4) %>% 
+  mutate(score = if_else(is.na(pub_year), score - 1, score)) %>% 
+  mutate(score = if_else(is.na(pub_country), score - 1, score)) %>% 
+  mutate(score = if_else(is.na(language), score - 1, score)) %>% 
+  mutate(score = if_else(is.na(lc_class), score - 1, score)) %>% 
+  arrange(-score) %>% 
+  distinct(resolved_oclc, .keep_all = TRUE)
+
+```
+
+
+## Problems Detected -- Problem Resolved
+
+The **Problems Dectected -- Problems Resolved** Section does not need to be run to generate the combined data.frame.  This section is only to document the discovery of a problem.  See the **NOTE** below.
 
 ###  Frequency of resolved_OCLC Number
 
@@ -224,6 +248,7 @@ big_distinct_primary_key_df
 ## Write combined dataframe as one TSV file
 ```{r}
 write.table(big_df, file = "data/combined.tsv", sep = "\t",  row.names = FALSE)
+write.table(big_scored_df, file = "data/combined_scored.tsv", sep = "\t",  row.names = FALSE)
 ```
 
 
