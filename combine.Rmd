@@ -160,13 +160,13 @@ In the case where there is duplication in the `resolved_oclc` key, keep the firs
 
 big_scored_df <- big_df %>% 
   # filter(resolved_oclc == "890946" | resolved_oclc == 7459090) %>% 
-  select(member_id, primary_key, resolved_oclc, pub_year, pub_country, language, lc_class) %>% 
+  # select(member_id, primary_key, resolved_oclc, pub_year, pub_country, language, lc_class) %>% 
   mutate(score = 4) %>% 
   mutate(score = if_else(is.na(pub_year), score - 1, score)) %>% 
   mutate(score = if_else(is.na(pub_country), score - 1, score)) %>% 
   mutate(score = if_else(is.na(language), score - 1, score)) %>% 
   mutate(score = if_else(is.na(lc_class), score - 1, score)) %>% 
-  arrange(-score) %>% 
+  arrange(resolved_oclc, -score) %>% 
   distinct(resolved_oclc, .keep_all = TRUE)
 
 ```
