@@ -171,6 +171,17 @@ big_scored_df <- big_df %>%
 
 ```
 
+## Join 
+
+Join the `big_df` data.frame with the scored `big_scored_df` data.frame and note which is the selected (i.e. "scored") row by adding a column `selected` with a cell value of "*True*"
+
+```{r}
+big_selected_df <- left_join(big_df, big_scored_df)
+
+big_selected_df <- big_selected_df %>% 
+  mutate(selected = if_else(is.na(score), NA_character_, "True"))
+```
+
 
 ## Problems Detected -- Problem Resolved
 
@@ -249,6 +260,7 @@ big_distinct_primary_key_df
 ```{r}
 write.table(big_df, file = "data/combined.tsv", sep = "\t",  row.names = FALSE)
 write.table(big_scored_df, file = "data/combined_scored.tsv", sep = "\t",  row.names = FALSE)
+write.table(big_selected_df, file = "data/combined_selected.tsv", sep = "\t",  row.names = FALSE)
 ```
 
 
