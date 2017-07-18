@@ -149,7 +149,7 @@ big_df <- big_df %>%
 ```
 
 
-## Priveledge: completeness heuristic
+## Priviledge: completeness heuristic
 
 In the case where there is duplication in the `resolved_oclc` key, keep the first item that has data in each of the following variables:  pub_year, pub_country, language, lc_class
 
