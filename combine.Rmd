@@ -183,6 +183,14 @@ big_selected_df <- big_selected_df %>%
 ```
 
 
+## Write combined dataframe as one TSV file
+```{r}
+write.table(big_df, file = "data/combined.tsv", sep = "\t",  row.names = FALSE)
+write.table(big_scored_df, file = "data/combined_scored.tsv", sep = "\t",  row.names = FALSE)
+write.table(big_selected_df, file = "data/combined_selected.tsv", sep = "\t",  row.names = FALSE)
+```
+
+
 ## Problems Detected -- Problem Resolved
 
 The **Problems Dectected -- Problems Resolved** Section does not need to be run to generate the combined data.frame.  This section is only to document the discovery of a problem.  See the **NOTE** below.
@@ -253,14 +261,6 @@ big_distinct_primary_key_df <-  big_df %>%
   distinct(primary_key, .keep_all = TRUE) 
 
 big_distinct_primary_key_df
-```
-
-
-## Write combined dataframe as one TSV file
-```{r}
-write.table(big_df, file = "data/combined.tsv", sep = "\t",  row.names = FALSE)
-write.table(big_scored_df, file = "data/combined_scored.tsv", sep = "\t",  row.names = FALSE)
-write.table(big_selected_df, file = "data/combined_selected.tsv", sep = "\t",  row.names = FALSE)
 ```
 
 
