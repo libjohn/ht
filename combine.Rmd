@@ -12,37 +12,37 @@ library(stringr)
 
 `read_delim` will imputed data types of columns from the first 1000 rows.  Later steps will transform all dataframes to share the same column types.  Four files had project failures and should be investigated.
 ```{r load-data}
-JHU <- read_delim("~/R/github/ht/data/JHU_Normalized.tsv", 
+JHU <- read_delim("data/JHU_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-UPenn <- read_delim("~/R/github/ht/data/UPenn_Normalized.tsv", 
+UPenn <- read_delim("data/UPenn_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-MIT <- read_delim("~/R/github/ht/data/MIT_Normalized.tsv", 
+MIT <- read_delim("data/MIT_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-Cornell <- read_delim("~/R/github/ht/data/Cornell_Normalized.tsv", 
+Cornell <- read_delim("data/Cornell_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-Brown <- read_delim("~/R/github/ht/data/Brown_Normalized.tsv", 
+Brown <- read_delim("data/Brown_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-Duke <- read_delim("~/R/github/ht/data/Duke_Normalized.tsv", 
+Duke <- read_delim("data/Duke_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-Yale <- read_delim("~/R/github/ht/data/Yale_Normalized.tsv", 
+Yale <- read_delim("data/Yale_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-UChicago <- read_delim("~/R/github/ht/data/UChicago_Normalized.tsv", 
+UChicago <- read_delim("data/UChicago_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-Harvard <- read_delim("~/R/github/ht/data/Harvard_Normalized.tsv", 
+Harvard <- read_delim("data/Harvard_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-Princeton <- read_delim("~/R/github/ht/data/Princeton_Normalized.tsv", 
+Princeton <- read_delim("data/Princeton_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-Columbia <- read_delim("~/R/github/ht/data/Columbia_Normalized.tsv", 
+Columbia <- read_delim("data/Columbia_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
 ```
