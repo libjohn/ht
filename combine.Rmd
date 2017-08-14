@@ -184,6 +184,7 @@ big_selected_df <- big_selected_df %>%
 
 
 ## Write combined dataframe as one TSV file
+
 ```{r}
 write.table(big_df, file = "data/combined.tsv", sep = "\t",  row.names = FALSE)
 write.table(big_scored_df, file = "data/combined_scored.tsv", sep = "\t",  row.names = FALSE)
@@ -289,4 +290,17 @@ problems(Harvard)
 ```
 
 
+## Investigating Problem with NA_Character_
 
+Tableau doesn't distinquish case in NA.  This creates a problem, in Tableau, for the `lc_class` field.  So far we've used three versions of NA:
+
+- NA = N/A or empty or null
+- NA1 = Architecture
+- Na = Architecture
+
+In email from Joyce -- dated 8/10/2017 -- there is a problem where lower case letters exist and cause problems for Tableau.  Tableau automatically combines case (e.g.  “ND” and “Nd” or “Ml” and “ML”) but this is a problem for 'NA', "Na", and "NA1".  I'm assuming this problem is taking place when Tableau analyzes the  `lc_class` field.  However, in code chunk 8 the `lc_class` field is being coerced to uppercase.  I am confused as to how Tableau is seeing some instances with the 2nd characters in lowercase.
+
+```{r}
+# big_df %>% 
+sort(unique(big_selected_df$lc_class))
+```
