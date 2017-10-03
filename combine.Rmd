@@ -21,8 +21,8 @@ UPenn <- read_delim("data/UPenn_Normalized.tsv",
 MIT <- read_delim("data/MIT_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 
-Cornell <- read_delim("data/Cornell_Normalized.tsv", 
-    "\t", escape_double = FALSE, trim_ws = TRUE)
+#Cornell <- read_delim("data/Cornell_Normalized.tsv", 
+#    "\t", escape_double = FALSE, trim_ws = TRUE)
 
 Brown <- read_delim("data/Brown_Normalized.tsv", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
@@ -97,8 +97,9 @@ glimpse(Columbia2)
 ## Combine all dataframes into one 
 ```{r}
 
-big_df <- bind_rows(JHU, UPenn, MIT, 
-                    Cornell, Brown, 
+big_df <- bind_rows(JHU, UPenn, MIT,
+                    # Cornell, 
+                    Brown, 
                     Yale, Harvard, Duke, 
                     UChicago2,   # as.integer(gov_docs) 
                     Princeton2,  # as.integer(pub_year)
@@ -203,14 +204,14 @@ Compute new column with facet count for `resolved_OCLC`, i.e., frequency count f
 NOTE:  After getting a freshly de-duped file from UPenn and running `distinct()` on the big_data.frame (`big_df`) the data.frame has been reduced by 1% and the largest duplication on resolved OCLC numbers is 7.  This is understood to be correct.
 
 
-```{r}
+```
 big_df %>% 
   count(resolved_oclc) %>% 
   arrange(-n)
 ```
 
 #### List `member_id`
-```{r}
+```
 big_df %>% 
   select(member_id) %>% 
   count(member_id) %>% 
@@ -218,7 +219,7 @@ big_df %>%
 ```
 
 #### Find examples of duplicates for each institution
-```{r}
+```
 big_df %>% 
   filter(member_id == "yale") %>% # brown, columbia, cornell
   # duke, harvard, JHU, mit, princeton, uchicago, upenn, yale
@@ -231,12 +232,12 @@ big_df %>%
 #### filter on a specific `resolved_oclc`
 
 resolved_oclc == 883016 has 7 rows  
-```{r}
+```
 big_df %>% 
   filter(resolved_oclc == 883016)  # 42 ; rows 411-420
 ```
 
-```{r}
+```
 big_df %>% 
   filter(resolved_oclc == 493136) %>% 
   group_by(member_id) %>% # columbia & princeton
@@ -249,7 +250,7 @@ big_df %>%
 #### filter on a specific `resolved_oclc`
 
 resolved_oclc == 276173 has 116 rows
-```{r}
+```
 big_df %>% 
   filter(resolved_oclc == 276173) # row 10 ; rows 10
 ```
@@ -257,7 +258,7 @@ big_df %>%
 #### Distinct primary_key
 
 looks like Princeton (perhaps; more research) has 50K duplicate rows by primary_key.  Use `distinct()` to retain only unique/distinct rows from an input tbl.
-```{r}
+```
 big_distinct_primary_key_df <-  big_df %>% 
   distinct(primary_key, .keep_all = TRUE) 
 
@@ -270,14 +271,14 @@ big_distinct_primary_key_df
 Note that four dataframes had parsing failures.  See console messages integrated into the project notebook ('combine.nb.html') for details.
 
 1. Cornell had 26 parsing failures out of over 1 Million rows.  The failures appear to be in the pub_year variable.
-```{r}
+```
 problems(Cornell)
 ```
 
 
 1. Brown had 43 parsing failures out of 165,000 rows.  The failures appear to be in the pub_year variable.
 
-```{r}
+```
 problems(Brown)
 ```
 
@@ -285,7 +286,7 @@ problems(Brown)
 
 1. University of Harvard had 489 parsing failures out of almost 670,000 rows.  The failures appear to be in the pub_year variable
 
-```{r}
+```
 problems(Harvard)
 ```
 
@@ -300,7 +301,7 @@ Tableau doesn't distinquish case in NA.  This creates a problem, in Tableau, for
 
 In email from Joyce -- dated 8/10/2017 -- there is a problem where lower case letters exist and cause problems for Tableau.  Tableau automatically combines case (e.g.  “ND” and “Nd” or “Ml” and “ML”) but this is a problem for 'NA', "Na", and "NA1".  I'm assuming this problem is taking place when Tableau analyzes the  `lc_class` field.  However, in code chunk 8 the `lc_class` field is being coerced to uppercase.  I am confused as to how Tableau is seeing some instances with the 2nd characters in lowercase.
 
-```{r}
+```
 # big_df %>% 
 sort(unique(big_selected_df$lc_class))
 ```
