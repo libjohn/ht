@@ -123,6 +123,18 @@ big_df <- big_df %>%
   mutate(lc_class = str_to_upper(lc_class))
 ```
 
+### Transform NA characters in pub_country
+
+pub_country has variable values "na" which stand for Netherlands Antilles.  This is confused with the NA_Character_ once analysis is done in Tableau.  Transform "na" to "NethAnt"
+
+```{r}
+big_df <- big_df %>% 
+  mutate(pub_country = if_else(is.na(pub_country), "NA_character_", pub_country)) %>% 
+  mutate(pub_country = if_else(pub_country == "na", "NethAnt", pub_country)) 
+```
+
+
+
 ### pub_year integrity transformation
 
 - Keep only 4-digit years in pub_year
@@ -182,7 +194,6 @@ big_selected_df <- left_join(big_df, big_scored_df)
 big_selected_df <- big_selected_df %>% 
   mutate(selected = if_else(is.na(score), NA_character_, "True"))
 ```
-
 
 ## Write combined dataframe as one TSV file
 
